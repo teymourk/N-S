@@ -3,11 +3,14 @@
 import { ReactNode } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { GameIcon, BackArrowIcon, IconGradientDefs } from "@/components/icons";
+import { GameId } from "@/types";
 
 interface GameLayoutProps {
   title: string;
   subtitle: string;
   emoji: string;
+  gameId?: GameId;
   children: ReactNode;
   showBack?: boolean;
 }
@@ -16,11 +19,15 @@ export function GameLayout({
   title,
   subtitle,
   emoji,
+  gameId,
   children,
   showBack = true,
 }: GameLayoutProps) {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#0a0a1a" }}>
+      {/* Shared SVG gradient defs required by all icons */}
+      <IconGradientDefs />
+
       {/* Frosted glass header */}
       <div
         className="sticky top-0 z-50 backdrop-blur-xl border-b"
@@ -29,26 +36,35 @@ export function GameLayout({
           borderColor: "rgba(255,255,255,0.06)",
         }}
       >
-        <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
+        <motion.div
+          className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between"
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
+        >
           {showBack ? (
             <Link
               href="/"
               className="flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-70"
               style={{ color: "#d4a574" }}
             >
-              <span className="text-base leading-none">←</span>
+              <BackArrowIcon size={18} />
               <span>Back</span>
             </Link>
           ) : (
             <div />
           )}
 
-          {/* Centered emoji */}
-          <span className="text-xl leading-none">{emoji}</span>
+          {/* Centered game icon or emoji fallback */}
+          {gameId ? (
+            <GameIcon gameId={gameId} size={24} animated={false} />
+          ) : (
+            <span className="text-xl leading-none">{emoji}</span>
+          )}
 
           {/* Spacer to balance the back button */}
           <div className="w-14" />
-        </div>
+        </motion.div>
       </div>
 
       {/* Title section */}
@@ -57,11 +73,8 @@ export function GameLayout({
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
-          className="text-2xl font-bold leading-tight"
-          style={{
-            fontFamily: "var(--font-display)",
-            color: "#f0e6d3",
-          }}
+          className="shimmer text-2xl font-bold leading-tight"
+          style={{ fontFamily: "var(--font-display)" }}
         >
           {title}
         </motion.h1>
@@ -76,8 +89,17 @@ export function GameLayout({
         </motion.p>
       </div>
 
+      {/* Gold divider */}
+      <motion.div
+        className="gold-divider max-w-lg mx-auto"
+        initial={{ scaleX: 0, opacity: 0 }}
+        animate={{ scaleX: 1, opacity: 1 }}
+        transition={{ delay: 0.2, duration: 0.5, ease: "easeOut" }}
+        style={{ transformOrigin: "center" }}
+      />
+
       {/* Game content */}
-      <div className="max-w-lg mx-auto px-4 pb-24">{children}</div>
+      <div className="max-w-lg mx-auto px-4 pb-24 pt-5">{children}</div>
     </div>
   );
 }

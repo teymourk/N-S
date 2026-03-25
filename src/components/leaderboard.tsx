@@ -2,6 +2,12 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useGuest } from "@/lib/guest-context";
+import {
+  GoldMedalIcon,
+  SilverMedalIcon,
+  BronzeMedalIcon,
+  SparkleIcon,
+} from "@/components/icons";
 
 interface LeaderboardEntry {
   guest_id: string;
@@ -15,7 +21,11 @@ interface LeaderboardProps {
   compact?: boolean;
 }
 
-const MEDAL = ["🥇", "🥈", "🥉"];
+const MEDAL_ICONS = [
+  <GoldMedalIcon key="gold" size={28} />,
+  <SilverMedalIcon key="silver" size={26} />,
+  <BronzeMedalIcon key="bronze" size={24} />,
+];
 
 const RANK_COLORS = {
   0: {
@@ -60,10 +70,12 @@ function TopPodiumCard({
       initial={{ opacity: 0, y: -16 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 16 }}
+      whileHover={{ scale: i === 0 ? 1.025 : 1.02 }}
       transition={{
         layout: { type: "spring", stiffness: 400, damping: 30 },
         opacity: { duration: 0.25 },
         y: { duration: 0.3, delay: i * 0.05 },
+        scale: { type: "spring", stiffness: 350, damping: 22 },
       }}
       className={`
         relative w-full mb-3 rounded-xl border backdrop-blur-sm overflow-hidden
@@ -86,12 +98,20 @@ function TopPodiumCard({
       <div className="relative flex items-center justify-between gap-3">
         {/* Left: medal + name */}
         <div className="flex items-center gap-3 min-w-0">
-          <span
-            className={`shrink-0 select-none ${i === 0 ? "text-2xl" : "text-xl"}`}
+          <motion.div
+            className="shrink-0"
             aria-label={`Rank ${i + 1}`}
+            initial={{ scale: 0.6, rotate: -15, opacity: 0 }}
+            animate={{ scale: 1, rotate: 0, opacity: 1 }}
+            transition={{
+              type: "spring",
+              stiffness: 380,
+              damping: 18,
+              delay: i * 0.07 + 0.1,
+            }}
           >
-            {MEDAL[i]}
-          </span>
+            {MEDAL_ICONS[i]}
+          </motion.div>
 
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
@@ -134,9 +154,14 @@ function TopPodiumCard({
         {/* Right: score */}
         <motion.div
           key={entry.total_score}
-          initial={{ scale: 1.25, opacity: 0.6 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 500, damping: 28 }}
+          initial={{ scale: i === 0 ? 1.6 : 1.25, opacity: 0, y: i === 0 ? -6 : 0 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          transition={{
+            type: "spring",
+            stiffness: i === 0 ? 320 : 500,
+            damping: i === 0 ? 18 : 28,
+            delay: i === 0 ? 0.15 : 0,
+          }}
           className="shrink-0 text-right"
         >
           <span
@@ -252,9 +277,7 @@ export function Leaderboard({ entries, compact = false }: LeaderboardProps) {
         transition={{ duration: 0.4 }}
         className="w-full flex flex-col items-center justify-center py-14 gap-3"
       >
-        <span className="text-3xl select-none" aria-hidden>
-          ✨
-        </span>
+        <SparkleIcon size={32} />
         <p
           className="text-[15px] font-medium text-center"
           style={{ color: "#8a8695" }}

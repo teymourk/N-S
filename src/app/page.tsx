@@ -7,6 +7,7 @@ import { GameCard } from "@/components/game-card";
 import { Leaderboard } from "@/components/leaderboard";
 import { GAMES, COUPLE } from "@/lib/games";
 import { useState, useEffect } from "react";
+import { IconGradientDefs, LeaderboardIcon, GamesGridIcon, TrophyIcon } from "@/components/icons";
 
 // Floating particle — pure CSS-driven drift via inline keyframes
 function GoldParticle({ x, y, delay, size }: { x: number; y: number; delay: number; size: number }) {
@@ -109,6 +110,7 @@ export default function HomePage() {
   if (!isRegistered) {
     return (
       <>
+        <IconGradientDefs />
         <style>{`
           @keyframes floatParticle {
             0%   { opacity: 0;    transform: translateY(0px) scale(0.8); }
@@ -338,6 +340,7 @@ export default function HomePage() {
 
   return (
     <>
+      <IconGradientDefs />
       <style>{`
         @keyframes goldShimmer {
           0%, 100% { background-position: 200% center; }
@@ -355,8 +358,9 @@ export default function HomePage() {
           100% { background-position: -200% center; }
         }
         @keyframes softPulse {
-          0%, 100% { opacity: 0.12; transform: scale(1); }
-          50%       { opacity: 0.22; transform: scale(1.06); }
+          0%, 100% { opacity: 0.10; transform: scale(1) translateY(0px); }
+          33%       { opacity: 0.24; transform: scale(1.07) translateY(-8px); }
+          66%       { opacity: 0.16; transform: scale(1.04) translateY(4px); }
         }
       `}</style>
 
@@ -490,8 +494,12 @@ export default function HomePage() {
                 padding: "5px 12px",
                 cursor: "pointer",
                 transition: "all 0.25s ease",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
               }}
             >
+              {showLeaderboard ? <GamesGridIcon size={14} /> : <LeaderboardIcon size={14} />}
               {showLeaderboard ? "Games" : "Scores"}
             </motion.button>
           </div>
@@ -508,24 +516,26 @@ export default function HomePage() {
                 exit={{ opacity: 0, y: -16 }}
                 transition={{ duration: 0.35, ease: "easeInOut" }}
               >
-                <h2
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontSize: "1.6rem",
-                    fontWeight: 700,
-                    letterSpacing: "0.06em",
-                    background: "linear-gradient(135deg, #d4a574 0%, #f0e6d3 50%, #d4a574 100%)",
-                    backgroundSize: "200% 100%",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                    animation: "goldShimmer 4s ease-in-out infinite",
-                    textAlign: "center",
-                    marginBottom: 24,
-                  }}
-                >
-                  Leaderboard
-                </h2>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginBottom: 24 }}>
+                  <TrophyIcon size={32} />
+                  <h2
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontSize: "1.6rem",
+                      fontWeight: 700,
+                      letterSpacing: "0.06em",
+                      background: "linear-gradient(135deg, #d4a574 0%, #f0e6d3 50%, #d4a574 100%)",
+                      backgroundSize: "200% 100%",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                      animation: "goldShimmer 4s ease-in-out infinite",
+                      margin: 0,
+                    }}
+                  >
+                    Leaderboard
+                  </h2>
+                </div>
                 <Leaderboard entries={[]} />
               </motion.div>
             ) : (
@@ -570,22 +580,26 @@ export default function HomePage() {
                   }}>
                     Your Score
                   </p>
-                  <p style={{
-                    fontFamily: "var(--font-display)",
-                    fontSize: "2.75rem",
-                    fontWeight: 800,
-                    background: "linear-gradient(135deg, #d4a574 0%, #f0e6d3 45%, #d4a574 80%, #c9904a 100%)",
-                    backgroundSize: "200% 100%",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                    animation: "goldShimmer 5s ease-in-out infinite, scoreGlow 3s ease-in-out infinite",
-                    fontVariantNumeric: "tabular-nums",
-                    lineHeight: 1,
-                    marginBottom: 6,
-                  }}>
+                  <motion.p
+                    animate={{ scale: [1, 1.04, 1] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontSize: "2.75rem",
+                      fontWeight: 800,
+                      background: "linear-gradient(135deg, #d4a574 0%, #f0e6d3 45%, #d4a574 80%, #c9904a 100%)",
+                      backgroundSize: "200% 100%",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                      animation: "goldShimmer 5s ease-in-out infinite, scoreGlow 3s ease-in-out infinite",
+                      fontVariantNumeric: "tabular-nums",
+                      lineHeight: 1,
+                      marginBottom: 6,
+                    }}
+                  >
                     0
-                  </p>
+                  </motion.p>
                   <p style={{
                     fontSize: "0.75rem",
                     color: "#6a6478",
@@ -595,8 +609,8 @@ export default function HomePage() {
                   </p>
                 </motion.div>
 
-                {/* Game list */}
-                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                {/* Game grid */}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                   {gamesWithStatus.map((game, i) => (
                     <GameCard key={game.id} game={game} index={i} />
                   ))}
