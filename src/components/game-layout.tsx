@@ -12,50 +12,72 @@ interface GameLayoutProps {
   showBack?: boolean;
 }
 
-export function GameLayout({ title, subtitle, emoji, children, showBack = true }: GameLayoutProps) {
+export function GameLayout({
+  title,
+  subtitle,
+  emoji,
+  children,
+  showBack = true,
+}: GameLayoutProps) {
   return (
-    <div className="min-h-screen gradient-bg">
-      {/* Header */}
-      <div className="sticky top-0 z-50 bg-white/70 backdrop-blur-lg border-b border-cream-dark/50">
+    <div className="min-h-screen" style={{ backgroundColor: "#0a0a1a" }}>
+      {/* Frosted glass header */}
+      <div
+        className="sticky top-0 z-50 backdrop-blur-xl border-b"
+        style={{
+          backgroundColor: "rgba(10,10,26,0.80)",
+          borderColor: "rgba(255,255,255,0.06)",
+        }}
+      >
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
           {showBack ? (
-            <Link href="/" className="text-rose-gold font-medium text-sm flex items-center gap-1">
-              ← Back
+            <Link
+              href="/"
+              className="flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-70"
+              style={{ color: "#d4a574" }}
+            >
+              <span className="text-base leading-none">←</span>
+              <span>Back</span>
             </Link>
           ) : (
             <div />
           )}
-          <div className="text-center">
-            <span className="text-lg">{emoji}</span>
-          </div>
-          <div className="w-14" /> {/* Spacer for centering */}
+
+          {/* Centered emoji */}
+          <span className="text-xl leading-none">{emoji}</span>
+
+          {/* Spacer to balance the back button */}
+          <div className="w-14" />
         </div>
       </div>
 
-      {/* Game Title */}
-      <div className="max-w-lg mx-auto px-4 pt-6 pb-4 text-center">
+      {/* Title section */}
+      <div className="max-w-lg mx-auto px-4 pt-8 pb-5 text-center">
         <motion.h1
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-2xl font-bold text-charcoal"
-          style={{ fontFamily: "var(--font-display)" }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="text-2xl font-bold leading-tight"
+          style={{
+            fontFamily: "var(--font-display)",
+            color: "#f0e6d3",
+          }}
         >
           {title}
         </motion.h1>
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="text-charcoal-light mt-1"
+          transition={{ delay: 0.12, duration: 0.4 }}
+          className="mt-2 text-sm leading-relaxed"
+          style={{ color: "#8a8695" }}
         >
           {subtitle}
         </motion.p>
       </div>
 
-      {/* Game Content */}
-      <div className="max-w-lg mx-auto px-4 pb-24">
-        {children}
-      </div>
+      {/* Game content */}
+      <div className="max-w-lg mx-auto px-4 pb-24">{children}</div>
     </div>
   );
 }
